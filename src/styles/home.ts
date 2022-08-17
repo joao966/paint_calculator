@@ -52,6 +52,11 @@ export const Card = styled.div`
     font-size: 1.25rem;
     line-height: 1.5;
   }
+
+  span {
+    color: red;
+    font-size: 0.85rem;
+  }
 `;
 
 export const Title = styled.div`

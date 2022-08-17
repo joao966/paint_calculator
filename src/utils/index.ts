@@ -17,10 +17,16 @@ export const walls = [
   }
 ];
 
-
 export const INITIAL_PAREDES = {
   parede_0: {height: 0, width: 0, window: 0, door: 0},
   parede_1: {height: 0, width: 0, window: 0, door: 0},
   parede_2: {height: 0, width: 0, window: 0, door: 0},
   parede_3: {height: 0, width: 0, window: 0, door: 0},
+};
+
+export const ERROR = {
+  parede_0: {height: "", width: "", wallWithDoor: ""},
+  parede_1: {height: "", width: "", wallWithDoor: ""},
+  parede_2: {height: "", width: "", wallWithDoor: ""},
+  parede_3: {height: "", width: "", wallWithDoor: ""},
 };
