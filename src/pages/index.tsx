@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import type { NextPage } from 'next'
@@ -16,48 +16,75 @@ import {
   Title,
   WapperInput
 } from '../styles/home'
-import { INITIAL_PAREDES, walls } from '../utils'
+import { INITIAL_PAREDES, ERROR, walls } from '../utils'
 
 const Home: NextPage = () => {
 
   const [inputValues, setInputValues] = useState<any>(INITIAL_PAREDES);
-  const [error, setError] = useState<any>('');
+  const [error, setError] = useState<any>(ERROR);
+  const [currentWall, setCurrentWall] = useState<any>('parede_0');
+  const [currentProperty, setCurrentProperty] = useState<any>(null);
 
+  const handleOk = (currentWall: any) => {
+    console.log('chega aqui?');
+    if (inputValues[currentWall].janela > 0 || inputValues[currentWall].porta > 0) {
+      const resultAlturaLargura = (inputValues.primeiraParede.altura * inputValues.primeiraParede.largura) / 2;
+      const resultPortaJanela = ( 1.52 * inputValues[currentWall].porta) + (2.4 * inputValues[currentWall].janela);
+      if (resultPortaJanela <= resultAlturaLargura) {
+        console.log('Ufaa');
+      } else {
+        window.alert('O total de área das portas e janelas deve ser no máximo 50% da área de parede');
+      }
+    } 
+  };
 
-  const validateDoor = (currentWall: any) => {
+  const validateDoor = (currentWall: any, fildError?: any) => {
     if (inputValues[currentWall].door === 0) {
-      // handleOk();
+      handleOk(currentWall);
     } else if (inputValues[currentWall].door > 0 && inputValues[currentWall].height > 2.2) {
-      // handleOk();
+      handleOk(currentWall);
     } else {
-      window.alert('A altura de paredes com porta deve ser, no mínimo, 30 centímetros maior que a altura da porta');
+      setError((prevState: any) => {
+        return {
+          ...prevState,
+          [currentWall] : {...prevState[currentWall], [fildError]: 'A altura de paredes com porta deve ser, no mínimo, 30 centímetros maior que a altura da porta'}
+        }
+      });
     }
   };
 
-  const validateWidth = (currentWall: any) => {
+  const validateWidth = (currentWall: any, fildError?: any) => {
     if ((inputValues[currentWall].width > 0) && (inputValues[currentWall].width) <= 15) {
-      validateDoor(currentWall);
-    } else {
-      window.alert('Largura incorreto');
+      validateDoor(currentWall, fildError);
+      return;
     }
+    setError((prevState: any) => {
+      return {
+        ...prevState,
+        [currentWall] : {...prevState[currentWall], [fildError]: `valor de entrada para o campo ${fildError} está inválido`}
+      }
+    });
   };
 
 
-  const validateHeight = (currentWall: any) => {
+  const validateHeight = (currentWall: any, fildError?: any) => {
     if ((inputValues[currentWall].height > 0) && (inputValues[currentWall].height) <= 15) {
-      // validateWidth(currentWall);
-    } else {
-      setError('valor da altura está incorreto')
-    }
+      validateDoor(currentWall, fildError);
+      return;
+    } 
+    setError((prevState: any) => {
+      return {
+        ...prevState,
+        [currentWall] : {...prevState[currentWall], [fildError]: `valor de entrada para o campo ${fildError} está inválido`}
+      }
+    });
   };
-  
-  
   
   const  onChange = (event: any) => {
     let currentWall = event.target.id;
-
-    // validateHeight(currentWall);
-
+    let currentProperty = event.target.name;
+    setCurrentWall(currentWall);
+    setCurrentProperty(currentProperty);
     setInputValues((prevState: any) => {
       return {
         ...prevState,
@@ -65,7 +92,6 @@ const Home: NextPage = () => {
       }
     });
   }
-
 
   return (
     <Container>
@@ -97,25 +123,51 @@ const Home: NextPage = () => {
               <WapperInput display="flex" justify="center" columnGap="10px" marginBottom="10px">
                 <label>
                   Altura
-                  <InputNumber onChange={onChange} id={`parede_${index}`} name="height" type="number" />
+                  <InputNumber
+                    disabled={inputValues[currentWall].door === 0}
+                    onBlur={() => {
+                      validateHeight(currentWall, currentProperty);
+                    }}
+                    onChange={onChange}
+                    id={`parede_${index}`}
+                    name="height"
+                    type="number"
+                  />
                 </label>
+
                 <label>
                   Largura
-                  <InputNumber onChange={onChange} id={`parede_${index}`} name="width" type="number" />
+                  <InputNumber
+                    onBlur={() => {
+                      validateWidth(currentWall, currentProperty);
+                    }}
+                    onChange={onChange}
+                    id={`parede_${index}`}
+                    name="width"
+                    type="number"
+                  />
                 </label>
               </WapperInput>
 
-              <WapperInput display="flex" columnGap="10px">
+              <WapperInput display="flex" columnGap="10px" marginBottom="10px">
                 <label>
                   Porta
-                  <InputNumber onChange={onChange} id={`parede_${index}`} name="door" type="number" />
+                  <InputNumber
+                    onChange={onChange}
+                    id={`parede_${index}`}
+                    name="door"
+                    type="number"
+                  />
                 </label>
                 <label>
                   Janela
                   <InputNumber onChange={onChange} id={`parede_${index}`} name="window" type="number" />
                 </label>
               </WapperInput>
-              {/* {error && error} */}
+
+              {error[currentWall].height && (currentWall == `parede_${index}`) && <span>{error[currentWall].height}</span>}
+              {error[currentWall].width && (currentWall == `parede_${index}`) && <span>{error[currentWall].width}</span>}
+              {error[currentWall].wallWithDoor && (currentWall == `parede_${index}`) && <span>{error[currentWall].wallWithDoor}</span>}
             </Card>
           ))}
         </Grid>
