@@ -108,8 +108,7 @@ export const Button = styled(ButtonAnt)`
 `;
 
 
-export const Logo = styled.div`
-  height: 1em;
+export const ByName = styled.div`
   margin-left: 0.5rem;
 `;
 
@@ -122,9 +121,7 @@ export const Footer = styled.div`
   align-items: center;
 
   a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-grow: 1;
+    text-decoration: none;
+    font-style: italic;
   }
 `;
