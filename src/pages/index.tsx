@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import type { NextPage } from 'next'
@@ -19,38 +19,44 @@ import {
 import { INITIAL_PAREDES, ERROR, walls } from '../utils'
 
 const Home: NextPage = () => {
-
   const [inputValues, setInputValues] = useState<any>(INITIAL_PAREDES);
   const [error, setError] = useState<any>(ERROR);
   const [currentWall, setCurrentWall] = useState<any>('parede_0');
   const [currentProperty, setCurrentProperty] = useState<any>(null);
-
-  const handleOk = (currentWall: any) => {
-    console.log('chega aqui?');
-    if (inputValues[currentWall].janela > 0 || inputValues[currentWall].porta > 0) {
-      const resultAlturaLargura = (inputValues.primeiraParede.altura * inputValues.primeiraParede.largura) / 2;
-      const resultPortaJanela = ( 1.52 * inputValues[currentWall].porta) + (2.4 * inputValues[currentWall].janela);
+  
+  const validateSpaceTotalWithDoorAndWindow = (currentWall: any, fildError: any) => {
+    if (inputValues[currentWall].window > 0 || inputValues[currentWall].door > 0) {
+      const resultAlturaLargura = (inputValues[currentWall].height * inputValues[currentWall].width) / 2;
+      const resultPortaJanela = ( 1.52 * inputValues[currentWall].door) + (2.4 * inputValues[currentWall].window);
       if (resultPortaJanela <= resultAlturaLargura) {
-        console.log('Ufaa');
-      } else {
-        window.alert('O total de área das portas e janelas deve ser no máximo 50% da área de parede');
+        return;
       }
-    } 
-  };
-
-  const validateDoor = (currentWall: any, fildError?: any) => {
-    if (inputValues[currentWall].door === 0) {
-      handleOk(currentWall);
-    } else if (inputValues[currentWall].door > 0 && inputValues[currentWall].height > 2.2) {
-      handleOk(currentWall);
-    } else {
       setError((prevState: any) => {
         return {
           ...prevState,
-          [currentWall] : {...prevState[currentWall], [fildError]: 'A altura de paredes com porta deve ser, no mínimo, 30 centímetros maior que a altura da porta'}
+          [currentWall] : {...prevState[currentWall], [fildError === 'door' ? 'wallWithDoor' : '']: 'O total de área das portas e janelas deve ser no máximo 50% da área de parede'}
         }
       });
     }
+  };
+
+  const validateDoor = (currentWall: any, fildError?: any) => {
+    if (inputValues[currentWall].door > 0 && inputValues[currentWall].height > 2.2) {
+      validateSpaceTotalWithDoorAndWindow(currentWall, fildError);
+      return;
+    } 
+
+    if (inputValues[currentWall].door === 0) {
+      validateSpaceTotalWithDoorAndWindow(currentWall, fildError);
+      return;
+    } 
+
+    setError((prevState: any) => {
+      return {
+        ...prevState,
+        [currentWall] : {...prevState[currentWall], [fildError === 'door' ? 'wallWithDoor' : '']: 'A altura de paredes com porta deve ser, no mínimo, 30 centímetros maior que a altura da porta'}
+      }
+    });
   };
 
   const validateWidth = (currentWall: any, fildError?: any) => {
@@ -65,7 +71,6 @@ const Home: NextPage = () => {
       }
     });
   };
-
 
   const validateHeight = (currentWall: any, fildError?: any) => {
     if ((inputValues[currentWall].height > 0) && (inputValues[currentWall].height) <= 15) {
@@ -124,14 +129,26 @@ const Home: NextPage = () => {
                 <label>
                   Altura
                   <InputNumber
-                    disabled={inputValues[currentWall].door === 0}
                     onBlur={() => {
+                      if((inputValues[currentWall].height * inputValues[currentWall].width) > 50) {
+                        setError((prevState: any) => {
+                          return {
+                            ...prevState,
+                            [currentWall] : {...prevState[currentWall], space: 'A parede não pode ter mais de 50 metros!'}
+                          }
+                        });
+                      }
                       validateHeight(currentWall, currentProperty);
+                    }}
+                    onFocus={() => {
+                      setError(ERROR);  
                     }}
                     onChange={onChange}
                     id={`parede_${index}`}
                     name="height"
                     type="number"
+                    min="1"
+                    max="7"
                   />
                 </label>
 
@@ -139,12 +156,25 @@ const Home: NextPage = () => {
                   Largura
                   <InputNumber
                     onBlur={() => {
+                      if((inputValues[currentWall].height * inputValues[currentWall].width) > 50) {
+                        setError((prevState: any) => {
+                          return {
+                            ...prevState,
+                            [currentWall] : {...prevState[currentWall], space: 'A parede não pode ter mais de 50 metros!'}
+                          }
+                        });
+                      }
                       validateWidth(currentWall, currentProperty);
+                    }}
+                    onFocus={() => {
+                      setError(ERROR);  
                     }}
                     onChange={onChange}
                     id={`parede_${index}`}
                     name="width"
                     type="number"
+                    min="1"
+                    max="7"
                   />
                 </label>
               </WapperInput>
@@ -153,21 +183,37 @@ const Home: NextPage = () => {
                 <label>
                   Porta
                   <InputNumber
+                    onBlur={() => {
+                      validateHeight(currentWall, currentProperty);
+                    }}
+                    onFocus={() => {
+                      setError(ERROR);  
+                    }}
                     onChange={onChange}
                     id={`parede_${index}`}
                     name="door"
                     type="number"
+                    max="3"
                   />
                 </label>
                 <label>
                   Janela
-                  <InputNumber onChange={onChange} id={`parede_${index}`} name="window" type="number" />
+                  <InputNumber
+                    onChange={onChange}
+                    onFocus={() => {
+                      setError(ERROR);  
+                    }}
+                    id={`parede_${index}`}
+                    name="window"
+                    type="number"
+                    max="3"
+                  />
                 </label>
               </WapperInput>
-
               {error[currentWall].height && (currentWall == `parede_${index}`) && <span>{error[currentWall].height}</span>}
               {error[currentWall].width && (currentWall == `parede_${index}`) && <span>{error[currentWall].width}</span>}
               {error[currentWall].wallWithDoor && (currentWall == `parede_${index}`) && <span>{error[currentWall].wallWithDoor}</span>}
+              {error[currentWall].space && (currentWall == `parede_${index}`) && <span>{error[currentWall].space}</span>}
             </Card>
           ))}
         </Grid>

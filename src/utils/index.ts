@@ -25,8 +25,8 @@ export const INITIAL_PAREDES = {
 };
 
 export const ERROR = {
-  parede_0: {height: "", width: "", wallWithDoor: ""},
-  parede_1: {height: "", width: "", wallWithDoor: ""},
-  parede_2: {height: "", width: "", wallWithDoor: ""},
-  parede_3: {height: "", width: "", wallWithDoor: ""},
+  parede_0: {height: "", width: "", wallWithDoor: "", space: ""},
+  parede_1: {height: "", width: "", wallWithDoor: "", space: ""},
+  parede_2: {height: "", width: "", wallWithDoor: "", space: ""},
+  parede_3: {height: "", width: "", wallWithDoor: "", space: ""},
 };

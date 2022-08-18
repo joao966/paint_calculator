@@ -90,8 +90,7 @@ export const WapperInput = styled.div<
     justify?: string,
     columnGap?: string,
     marginBottom?: string
-  }
->`
+  }>`
   display: ${({display}) => display};
   justify-content: ${({justify}) => justify};
   margin-bottom: ${({marginBottom}) => marginBottom ? marginBottom : ""};
@@ -99,7 +98,9 @@ export const WapperInput = styled.div<
 `;
 
 export const InputNumber = styled.input`
+  min-width: 120px;
   width: 100%;
+  cursor: pointer;
 `;
 
 export const Button = styled(ButtonAnt)`
