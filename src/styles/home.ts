@@ -38,8 +38,8 @@ export const Card = styled.div`
   :hover,
   :focus,
   :active {
-    color: #0070f3;
-    border-color: #0070f3;
+    color: #696969;
+    border-color: black;
   }
 
   h2 {

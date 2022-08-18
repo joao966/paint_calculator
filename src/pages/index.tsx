@@ -28,7 +28,15 @@ const Home: NextPage = () => {
     setError,
     currentWall,
     currentProperty,
-    inputValues
+    inputValues,
+    onClickResult,
+    cansPaint: {
+      lata05,
+      lata25,
+      lata36,
+      lata18
+    },
+    reset
   } = useContext(Context);
 
   return (
@@ -82,6 +90,7 @@ const Home: NextPage = () => {
                     type="number"
                     min="1"
                     max="7"
+                    value={inputValues[`parede_${index}`].height}
                   />
                 </label>
 
@@ -108,6 +117,7 @@ const Home: NextPage = () => {
                     type="number"
                     min="1"
                     max="7"
+                    value={inputValues[`parede_${index}`].width}
                   />
                 </label>
               </WapperInput>
@@ -127,6 +137,7 @@ const Home: NextPage = () => {
                     name="door"
                     type="number"
                     max="3"
+                    value={inputValues[`parede_${index}`].door}
                   />
                 </label>
                 <label>
@@ -140,6 +151,7 @@ const Home: NextPage = () => {
                     name="window"
                     type="number"
                     max="3"
+                    value={inputValues[`parede_${index}`].window}
                   />
                 </label>
               </WapperInput>
@@ -150,8 +162,18 @@ const Home: NextPage = () => {
             </Card>
           ))}
         </Grid>
+        
 
-        <Button type="primary">Calcular</Button>
+        <Button onClick={onClickResult} type="primary">{ reset ? "Fazer outro cálculo" : "Calcular"}</Button>
+
+        {reset && (
+          <Card>
+            {lata05 > 0 && <p>Precisa de {lata05} latas de 0.5L</p>}
+            {lata25 > 0 && <p>Precisa de {lata25} latas de 2.5L</p>}
+            {lata36 > 0 && <p>Precisa de {lata36} latas de 3.6L</p>}
+            {lata18 > 0 && <p>Precisa de {lata18} latas de 18L</p>}
+          </Card>
+        )}
       </Main>
 
       <Footer className="footer">
