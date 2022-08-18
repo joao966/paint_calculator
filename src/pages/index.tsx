@@ -16,7 +16,7 @@ import {
   Title,
   WapperInput
 } from '../styles/home'
-import { ERROR, walls } from '../utils'
+import { ERROR, walls } from '../constants'
 import { Context } from '../context/Provider'
 
 const Home: NextPage = () => {
@@ -28,11 +28,9 @@ const Home: NextPage = () => {
     setError,
     currentWall,
     currentProperty,
-    inputValues } = useContext(Context);
-    // console.log('inputValues: ', inputValues);
-    // console.log('error: ', error);
+    inputValues
+  } = useContext(Context);
 
-  
   return (
     <Container>
       <Head>

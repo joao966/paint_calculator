@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ERROR, INITIAL_PAREDES } from "../utils";
+import { ERROR, INITIAL_PAREDES } from "../constants";
 
 const useCalculator = () => {
   const [inputValues, setInputValues] = useState<any>(INITIAL_PAREDES);
