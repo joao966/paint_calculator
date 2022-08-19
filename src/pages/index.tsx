@@ -14,9 +14,10 @@ import {
   ByName,
   Main,
   Title,
-  WapperInput
+  WapperInput,
+  ContainerError
 } from '../styles/home'
-import { ERROR, walls } from '../constants'
+import { walls } from '../constants'
 import { Context } from '../context/Provider'
 
 const Home: NextPage = () => {
@@ -44,12 +45,12 @@ const Home: NextPage = () => {
       <Head>
         <title>Paint Calculator</title>
         <meta name="description" content="Paint Calculator" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/tinta.ico" />
       </Head>
 
       <GlobalStyle />
 
-      <Main >
+      <Main>
         <Title>
           Welcome to Paint Calculator
         </Title>
@@ -81,9 +82,6 @@ const Home: NextPage = () => {
                       }
                       validateHeight(currentWall, currentProperty);
                     }}
-                    onFocus={() => {
-                      setError(ERROR);  
-                    }}
                     onChange={onChange}
                     id={`parede_${index}`}
                     name="height"
@@ -108,9 +106,6 @@ const Home: NextPage = () => {
                       }
                       validateWidth(currentWall, currentProperty);
                     }}
-                    onFocus={() => {
-                      setError(ERROR);  
-                    }}
                     onChange={onChange}
                     id={`parede_${index}`}
                     name="width"
@@ -129,9 +124,6 @@ const Home: NextPage = () => {
                     onBlur={() => {
                       validateHeight(currentWall, currentProperty);
                     }}
-                    onFocus={() => {
-                      setError(ERROR);  
-                    }}
                     onChange={onChange}
                     id={`parede_${index}`}
                     name="door"
@@ -144,9 +136,6 @@ const Home: NextPage = () => {
                   Janela
                   <InputNumber
                     onChange={onChange}
-                    onFocus={() => {
-                      setError(ERROR);  
-                    }}
                     id={`parede_${index}`}
                     name="window"
                     type="number"
@@ -155,23 +144,25 @@ const Home: NextPage = () => {
                   />
                 </label>
               </WapperInput>
-              {error[currentWall].height && (currentWall == `parede_${index}`) && <span>{error[currentWall].height}</span>}
-              {error[currentWall].width && (currentWall == `parede_${index}`) && <span>{error[currentWall].width}</span>}
-              {error[currentWall].wallWithDoor && (currentWall == `parede_${index}`) && <span>{error[currentWall].wallWithDoor}</span>}
-              {error[currentWall].space && (currentWall == `parede_${index}`) && <span>{error[currentWall].space}</span>}
+              
+              <ContainerError>
+                {error[currentWall].height && (currentWall == `parede_${index}`) && <span>{error[currentWall].height}</span>}
+                {error[currentWall].width && (currentWall == `parede_${index}`) && <span>{error[currentWall].width}</span>}
+                {error[currentWall].wallWithDoor && (currentWall == `parede_${index}`) && <span>{error[currentWall].wallWithDoor}</span>}
+                {error[currentWall].space && (currentWall == `parede_${index}`) && <span>{error[currentWall].space}</span>}
+              </ContainerError>
             </Card>
           ))}
         </Grid>
-        
 
         <Button onClick={onClickResult} type="primary">{ reset ? "Fazer outro cálculo" : "Calcular"}</Button>
 
         {reset && (
           <Card>
-            {lata05 > 0 && <p>Precisa de {lata05} latas de 0.5L</p>}
-            {lata25 > 0 && <p>Precisa de {lata25} latas de 2.5L</p>}
-            {lata36 > 0 && <p>Precisa de {lata36} latas de 3.6L</p>}
-            {lata18 > 0 && <p>Precisa de {lata18} latas de 18L</p>}
+            {lata05 > 0 && <Description>Precisa de {lata05} latas de 0.5L</Description>}
+            {lata25 > 0 && <Description>Precisa de {lata25} latas de 2.5L</Description>}
+            {lata36 > 0 && <Description>Precisa de {lata36} latas de 3.6L</Description>}
+            {lata18 > 0 && <Description>Precisa de {lata18} latas de 18L</Description>}
           </Card>
         )}
       </Main>
