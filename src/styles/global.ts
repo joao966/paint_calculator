@@ -22,6 +22,7 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
+
   @media (prefers-color-scheme: dark) {
     .card,
     .footer {

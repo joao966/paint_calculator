@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "docker": "docker image build --tag paint_calculator . && docker run -p 3000:3000 paint_calculator"
   },
   "dependencies": {
     "antd": "^4.22.5",

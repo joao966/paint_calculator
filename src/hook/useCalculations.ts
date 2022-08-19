@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { ERROR, INITIAL_CANS, INITIAL_PAREDES } from "../constants";
+import { CANS_MODEL, ERROR_MODEL, WALL_MODEL } from "../models";
 
 const useCalculator = () => {
-  const [inputValues, setInputValues] = useState<any>(INITIAL_PAREDES);
-  const [error, setError] = useState<any>(ERROR);
-  const [currentWall, setCurrentWall] = useState<any>('parede_0');
-  const [currentProperty, setCurrentProperty] = useState<any>(null);
-  const [cansPaint, setCansPaint] = useState<any>(INITIAL_CANS);
-  const [reset, setReset] = useState<any>(false);
+  const [inputValues, setInputValues] = useState<WALL_MODEL | any>(INITIAL_PAREDES);
+  const [error, setError] = useState<ERROR_MODEL>(ERROR);
+  const [currentWall, setCurrentWall] = useState<string>('parede_0');
+  const [currentProperty, setCurrentProperty] = useState<string>('');
+  const [cansPaint, setCansPaint] = useState<CANS_MODEL>(INITIAL_CANS);
+  const [reset, setReset] = useState<boolean>(false);
 
   const onClickResult = () => {
-    console.log('reset: ', reset);
+    validateHeight(currentWall, currentProperty)
+    validateWidth(currentWall, currentProperty);
+    validateDoor(currentWall, currentProperty);
+    validateSpaceTotalWithDoorAndWindow(currentWall, currentProperty);
+
     if(reset) {
-      console.log('if: ');
       setError(ERROR);
       setInputValues(INITIAL_PAREDES); 
       setReset(false);
@@ -62,9 +66,10 @@ const useCalculator = () => {
         lata18
       })
       setReset(true);
+ 
       return;
     } else {
-      setError((prevState: any) => {
+      setError((prevState: ERROR_MODEL | any) => {
         return {
           ...prevState,
           [currentWall] : {...prevState[currentWall], space: 'Defina as medidas da parede!'}
@@ -73,11 +78,12 @@ const useCalculator = () => {
     }
   };
   
-  const validateSpaceTotalWithDoorAndWindow = (currentWall: any, fildError: any) => {
+  const validateSpaceTotalWithDoorAndWindow = (currentWall: string, fildError: string | undefined) => {
     if (inputValues[currentWall].window > 0 || inputValues[currentWall].door > 0) {
       const resultAlturaLargura = (inputValues[currentWall].height * inputValues[currentWall].width) / 2;
       const resultPortaJanela = ( 1.52 * inputValues[currentWall].door) + (2.4 * inputValues[currentWall].window);
       if (resultPortaJanela <= resultAlturaLargura) {
+        //passou por todas as validções!
         return;
       }
       setError((prevState: any) => {
@@ -89,7 +95,7 @@ const useCalculator = () => {
     }
   };
 
-  const validateDoor = (currentWall: any, fildError?: any) => {
+  const validateDoor = (currentWall: string, fildError?: string | undefined) => {
     if (inputValues[currentWall].door > 0 && inputValues[currentWall].height > 2.2) {
       validateSpaceTotalWithDoorAndWindow(currentWall, fildError);
       return;
@@ -103,14 +109,15 @@ const useCalculator = () => {
     setError((prevState: any) => {
       return {
         ...prevState,
-        [currentWall] : {...prevState[currentWall], [fildError === 'door' ? 'wallWithDoor' : '']: 'A altura de paredes com porta deve ser, no mínimo, 30 centímetros maior que a altura da porta'}
+        [currentWall] : {...prevState[currentWall], [fildError === 'door'?'wallWithDoor':'']: 'A altura de paredes com porta deve ser, no mínimo, 30 centímetros maior que a altura da porta'}
       }
     });
   };
 
-  const validateWidth = (currentWall: any, fildError?: any) => {
+  const validateWidth = (currentWall: string, fildError?: string | any) => {
     if ((inputValues[currentWall].width > 0) && (inputValues[currentWall].width) <= 15) {
       validateDoor(currentWall, fildError);
+      setError(ERROR);
       return;
     }
     setError((prevState: any) => {
@@ -121,12 +128,12 @@ const useCalculator = () => {
     });
   };
 
-  const validateHeight = (currentWall: any, fildError?: any) => {
+  const validateHeight = (currentWall: string, fildError?: string | any) => {
     if ((inputValues[currentWall].height > 0) && (inputValues[currentWall].height) <= 15) {
       validateDoor(currentWall, fildError);
       return;
     } 
-    setError((prevState: any) => {
+    setError((prevState: ERROR_MODEL | any) => {
       return {
         ...prevState,
         [currentWall] : {...prevState[currentWall], [fildError]: `valor de entrada para o campo ${fildError} está inválido`}
@@ -134,12 +141,12 @@ const useCalculator = () => {
     });
   };
   
-  const  onChange = (event: any) => {
+  const  onChange = (event: React.FormEvent<HTMLInputElement> | any) => {
     let currentWall = event.target.id;
     let currentProperty = event.target.name;
     setCurrentWall(currentWall);
     setCurrentProperty(currentProperty);
-    setInputValues((prevState: any) => {
+    setInputValues((prevState: WALL_MODEL | any) => {
       return {
         ...prevState,
         [currentWall] : {...prevState[currentWall], [event.target.name]: event.target.value}

@@ -6,7 +6,7 @@ export const Container = styled.div`
 `;
 
 export const Main = styled.main`
-  min-height: 100vh;
+  min-height: 100%;
   padding: 4rem 0;
   flex: 1;
   display: flex;
@@ -78,7 +78,7 @@ export const Title = styled.div`
 `;
 
 export const Description = styled.div`
-  margin: 4rem 0;
+  margin: 1rem 0;
   line-height: 1.5;
   font-size: 1.5rem;
   text-align: center;
@@ -101,6 +101,13 @@ export const InputNumber = styled.input`
   min-width: 120px;
   width: 100%;
   cursor: pointer;
+`;
+
+export const ContainerError = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
 `;
 
 export const Button = styled(ButtonAnt)`
