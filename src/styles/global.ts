@@ -13,6 +13,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     box-sizing: border-box;
+    background: #8b008b;
   }
 
   @media (max-width: 600px) {
