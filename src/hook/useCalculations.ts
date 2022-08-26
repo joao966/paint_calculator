@@ -26,10 +26,8 @@ const useCalculator = () => {
     let resultadoTotalParedeM2;
     let lata05 = 0, lata25 = 0, lata36 = 0, lata18 = 0;
 
-    if ((inputValues.parede_0.height.length > 0 && inputValues.parede_0.width.length > 0) ||
-        (inputValues.parede_1.height.length > 0 && inputValues.parede_1.width.length > 0) ||
-        (inputValues.parede_2.height.length > 0 && inputValues.parede_2.width.length > 0) ||
-        (inputValues.parede_3.height.length > 0 && inputValues.parede_3.width.length > 0)) {
+
+    if (Object.values(inputValues).some(({height, width}: any) => height > 0 || width > 0)) {
       
       const parede1 = (inputValues.parede_0.height * inputValues.parede_0.width) - ( 1.52 * inputValues.parede_0.door) - (2.4 * inputValues.parede_0.window);
 
