@@ -9,6 +9,7 @@ const useCalculator = () => {
   const [currentProperty, setCurrentProperty] = useState<string>('');
   const [cansPaint, setCansPaint] = useState<CANS_MODEL>(INITIAL_CANS);
   const [reset, setReset] = useState<boolean>(false);
+  const [viewMeter, setViewMeter] = useState<string>('');
 
   const onClickResult = () => {
     validateHeight(currentWall, currentProperty)
@@ -16,47 +17,12 @@ const useCalculator = () => {
     validateDoor(currentWall, currentProperty);
     validateSpaceTotalWithDoorAndWindow(currentWall, currentProperty);
 
-    if(reset) {
-      setError(ERROR);
-      setInputValues(INITIAL_PAREDES); 
-      setReset(false);
-      return;
-    }
-
-    let resultadoTotalParedeM2;
-    let lata05 = 0, lata25 = 0, lata36 = 0, lata18 = 0;
-
+    if(reset) resetChange();
 
     if (Object.values(inputValues).some(({height, width}: any) => height > 0 || width > 0)) {
-      
-      const parede1 = (inputValues.parede_0.height * inputValues.parede_0.width) - ( 1.52 * inputValues.parede_0.door) - (2.4 * inputValues.parede_0.window);
-
-      const parede2 = (inputValues.parede_1.height * inputValues.parede_1.width) - ( 1.52 * inputValues.parede_1.door) - (2.4 * inputValues.parede_1.window);
-
-      const parede3 = (inputValues.parede_2.height * inputValues.parede_2.width) - ( 1.52 * inputValues.parede_2.door) - (2.4 * inputValues.parede_2.window);
-
-      const parede4 = (inputValues.parede_3.height * inputValues.parede_3.width) - ( 1.52 * inputValues.parede_3.door) - (2.4 * inputValues.parede_3.window);
-
-      resultadoTotalParedeM2 = parede1 + parede2 + parede3 + parede4;
-
-
-      let litroTintas = resultadoTotalParedeM2 / 5;
-      while (litroTintas > 0) {
-        if (litroTintas >= 18) {
-          litroTintas = litroTintas - 18
-          lata18 += 1;
-        } else if (litroTintas >= 3.6) {
-          litroTintas = litroTintas - 3.6;
-          lata36 += 1;
-        } else if (litroTintas >= 2.5) {
-          litroTintas = litroTintas - 2.5;
-          lata25 += 1;
-        } else {
-          litroTintas = litroTintas - 0.5;
-          lata05 += 1;
-        }
-      }
-
+      const resultadoTotalParedeM2 = calulateMeters();
+      setViewMeter(String(resultadoTotalParedeM2));
+      const { lata05, lata25, lata36, lata18 } = calculateCans(resultadoTotalParedeM2);
       setCansPaint({
         lata05,
         lata25,
@@ -64,7 +30,6 @@ const useCalculator = () => {
         lata18
       })
       setReset(true);
- 
       return;
     } else {
       setError((prevState: ERROR_MODEL | any) => {
@@ -152,6 +117,46 @@ const useCalculator = () => {
     });
   }
 
+  const resetChange = () => {
+    setError(ERROR);
+    setInputValues(INITIAL_PAREDES); 
+    setReset(false);
+    return;
+  };
+
+  const calulateMeters = () => {
+    const parede1 = (inputValues.parede_0.height * inputValues.parede_0.width) - ( 1.52 *   inputValues.parede_0.door) - (2.4 * inputValues.parede_0.window);
+
+    const parede2 = (inputValues.parede_1.height * inputValues.parede_1.width) - ( 1.52 * inputValues.parede_1.door) - (2.4 * inputValues.parede_1.window);
+
+    const parede3 = (inputValues.parede_2.height * inputValues.parede_2.width) - ( 1.52 * inputValues.parede_2.door) - (2.4 * inputValues.parede_2.window);
+
+    const parede4 = (inputValues.parede_3.height * inputValues.parede_3.width) - ( 1.52 * inputValues.parede_3.door) - (2.4 * inputValues.parede_3.window);
+
+    return parede1 + parede2 + parede3 + parede4;
+  };
+
+  const calculateCans = (resultadoTotalParedeM2: number) => {
+    let litroTintas = resultadoTotalParedeM2 / 5;
+    let lata05 = 0, lata25 = 0, lata36 = 0, lata18 = 0;
+    while (litroTintas > 0) {
+      if (litroTintas >= 18) {
+        litroTintas = litroTintas - 18
+        lata18 += 1;
+      } else if (litroTintas >= 3.6) {
+        litroTintas = litroTintas - 3.6;
+        lata36 += 1;
+      } else if (litroTintas >= 2.5) {
+        litroTintas = litroTintas - 2.5;
+        lata25 += 1;
+      } else {
+        litroTintas = litroTintas - 0.5;
+        lata05 += 1;
+      }
+    }
+    return { lata05, lata25, lata36, lata18 }
+  };
+
   return {
     onChange,
     validateHeight,
@@ -163,7 +168,8 @@ const useCalculator = () => {
     currentProperty,
     onClickResult,
     cansPaint,
-    reset
+    reset,
+    viewMeter
   }
 };
 

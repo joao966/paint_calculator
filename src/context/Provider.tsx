@@ -1,7 +1,6 @@
-import React, { createContext, FC } from 'react';
+import React, { createContext } from 'react';
 import useCalculations from '../hook/useCalculations';
 import { CANS_MODEL, ERROR_MODEL, WALL_MODEL } from '../models';
-
 
 interface AppContextInterface {
   onChange?: (e: HTMLInputElement) => void;
@@ -15,6 +14,7 @@ interface AppContextInterface {
   onClickResult: () => void;
   cansPaint: CANS_MODEL;
   reset: boolean;
+  viewMeter: string;
 }
 
 export const Context = createContext<AppContextInterface | any>(null);

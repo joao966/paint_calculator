@@ -37,7 +37,8 @@ const Home: NextPage = () => {
       lata36,
       lata18
     },
-    reset
+    reset,
+    viewMeter
   } = useContext(Context);
 
   return (
@@ -163,6 +164,7 @@ const Home: NextPage = () => {
             {lata25 > 0 && <Description>Precisa de {lata25} latas de 2.5L</Description>}
             {lata36 > 0 && <Description>Precisa de {lata36} latas de 3.6L</Description>}
             {lata18 > 0 && <Description>Precisa de {lata18} latas de 18L</Description>}
+            {viewMeter && <>Total de {viewMeter} m<sup>2</sup></>}
           </Card>
         )}
       </Main>
